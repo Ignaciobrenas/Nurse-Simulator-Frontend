@@ -79,13 +79,19 @@ Following the specification (`angular.dev/tutorials` -> *Learn Angular*), the 10
 
 ### 5.2. Home Screen Component (`Home`) — Ignacio Breñas (`#2`)
 - **Branch:** `2-develop-home-screen-component`
-- **Status:** `[Pending implementation notes and evidence screenshots]`
-- **Items to document:**
-  - Component generated with `ng generate component ...`, dedicated `.html` file, and `/home` route (`Home <-> Login`, `Home <-> Nurse List`, `Home <-> Nurse Search`).
-  - Hospital logo and icons included in the view.
-  - `(click)` interaction modifying a visible value in the view.
-  - Usage of `@if` / `@switch` and `@for`.
-  - Screenshots in [`docs/screens/home/`](../screens/home/).
+- **Pull Request:** [PR #9](https://github.com/Ignaciobrenas/Nurse-Simulator-Frontend/pull/9) (`MERGED` into `staging`)
+- **Key files:** `src/app/components/home/` (`home.component.ts`, `home.component.html`, `home.component.css`, `home.component.spec.ts`), `public/nurse-logo.png`, `src/styles.css`, `src/app/app.routes.ts`.
+- **Implementation & PR06 compliance:**
+  - **Own HTML file:** dedicated `src/app/components/home/home.component.html` styled with a clinical white-and-green hospital palette (`--ns-*` CSS tokens in `src/styles.css`).
+  - **Image & icons:** custom hospital shield emblem `<img src="nurse-logo.png">` and module SVG icons.
+  - **Click interaction:** ward shift tabs (`Morning`, `Afternoon`, `Night`) via `selectShift(shift)` and `Switch Shift` button via `cycleShift()`, dynamically updating the visible shift label and schedule details.
+  - **Control flow (`@switch` and `@for`):** `@switch (activeShift())` for shift details, `@for (shift of shifts; track shift)` for shift tabs, and `@for (screen of screens; track screen.route)` for module navigation cards.
+  - **Navigation (`RouterLink`):** direct links to `/login`, `/nurse-list`, and `/nurse-search`, with `'' -> /home` configured in `src/app/app.routes.ts`.
+  - **Verification:** clean `ng build` with zero warnings and `ng test` passing 5/5 tests (2 in `app.component.spec.ts`, 3 in `home.component.spec.ts`).
+- **Evidence:** screenshots in [`docs/screens/home/`](../screens/home/):
+  - [`home-morning.png`](../screens/home/home-morning.png) — Initial view displaying the hospital logo, `Morning Shift`, and the 3 navigation cards.
+  - [`home-night.png`](../screens/home/home-night.png) — Updated view after `(click)` interaction (`Night Shift` and `On-Call Guard` badge rendered via `@switch`).
+  - [`home-mobile.png`](../screens/home/home-mobile.png) — Mobile responsive layout check (`390x844`).
 
 ### 5.3. Login Screen Component (`Login`) — Christopher Roger Tito (`#3`)
 - **Branch:** `3-develop-login-component-with-validation-and-role-switcher`
@@ -121,7 +127,7 @@ Following the specification (`angular.dev/tutorials` -> *Learn Angular*), the 10
 
 | Screen | Own `.html` file | `Home <-> Screen` Navigation | Image or Icon | `(click)` modifying view | `@if` / `@switch` & `@for` | Status |
 | :--- | :---: | :---: | :---: | :---: | :---: | :--- |
-| **Home** | Pending | `/home` -> `/login`, `/nurse-list`, `/nurse-search` | Pending | Pending | Pending | Pending (`#2`) |
+| **Home** | `home.component.html` | `/home` -> `/login`, `/nurse-list`, `/nurse-search` | `nurse-logo.png` + SVG | `selectShift()` / `cycleShift()` | `@switch` + `@for` | Completed (`PR #9`) |
 | **Login** | Pending | `/login` <-> `/home` | Pending | Pending | Pending | In progress (`#3`) |
 | **Nurse List** | Pending | `/nurse-list` <-> `/home` | Pending | Pending | Pending | In progress (`#4`) |
 | **Nurse Search** | Pending | `/nurse-search` <-> `/home` | Pending | Pending | Pending | Pending (`#5`) |

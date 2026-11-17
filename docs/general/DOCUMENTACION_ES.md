@@ -79,13 +79,19 @@ Siguiendo las pautas del enunciado (`angular.dev/tutorials` -> *Learn Angular*),
 
 ### 5.2. Pantalla Inicial (`Home`) — Ignacio Breñas (`#2`)
 - **Rama:** `2-develop-home-screen-component`
-- **Estado:** `[Pendiente de documentar implementación y adjuntar capturas]`
-- **Puntos a documentar:**
-  - Generación del componente (`ng generate component ...`) con archivo `.html` propio y ruta `/home` (`Home <-> Login`, `Home <-> Nurse List`, `Home <-> Nurse Search`).
-  - Logotipo hospitalario e iconos incluidos en la vista.
-  - Interacción `(click)` modificando un valor visible en la vista.
-  - Uso de `@if` o `@switch` y de `@for`.
-  - Capturas en [`docs/screens/home/`](../screens/home/).
+- **Pull Request:** [PR #9](https://github.com/Ignaciobrenas/Nurse-Simulator-Frontend/pull/9) (`MERGED` en `staging`)
+- **Archivos principales:** `src/app/components/home/` (`home.component.ts`, `home.component.html`, `home.component.css`, `home.component.spec.ts`), `public/nurse-logo.png`, `src/styles.css`, `src/app/app.routes.ts`.
+- **Implementación y cumplimiento de pautas PR06:**
+  - **HTML propio:** plantilla dedicada en `src/app/components/home/home.component.html` con paleta hospitalaria en blanco y verde clínico (`--ns-*` en `src/styles.css`).
+  - **Imagen e iconos:** logotipo hospitalario `<img src="nurse-logo.png">` e iconos SVG por módulo.
+  - **Interacción `(click)`:** selector de turno de planta (`Morning`, `Afternoon`, `Night`) con botones `selectShift(shift)` y botón `Switch Shift` (`cycleShift()`), actualizando en tiempo real el turno activo y su horario visible.
+  - **Control de flujo (`@switch` y `@for`):** `@switch (activeShift())` para mostrar el detalle horario de cada turno; `@for (shift of shifts; track shift)` para los botones de turno; `@for (screen of screens; track screen.route)` para las tarjetas de navegación.
+  - **Navegación (`RouterLink`):** enlaces directos hacia `/login`, `/nurse-list` y `/nurse-search`, con redirección base `'' -> /home` en `src/app/app.routes.ts`.
+  - **Verificación:** compilación `ng build` sin errores ni advertencias y `ng test` con 5/5 tests superados (2 en `app.component.spec.ts` y 3 en `home.component.spec.ts`).
+- **Evidencias:** capturas en [`docs/screens/home/`](../screens/home/):
+  - [`home-morning.png`](../screens/home/home-morning.png) — Vista inicial con el logotipo hospitalario, el turno `Morning Shift` y las 3 tarjetas de navegación.
+  - [`home-night.png`](../screens/home/home-night.png) — Estado tras pulsar el selector de turno (`(click)` -> `Night Shift` y etiqueta `On-Call Guard` mediante `@switch`).
+  - [`home-mobile.png`](../screens/home/home-mobile.png) — Comprobación de diseño responsive en vista móvil (`390x844`).
 
 ### 5.3. Pantalla de Validación de Login (`Login`) — Christopher Roger Tito (`#3`)
 - **Rama:** `3-develop-login-component-with-validation-and-role-switcher`
@@ -121,7 +127,7 @@ Siguiendo las pautas del enunciado (`angular.dev/tutorials` -> *Learn Angular*),
 
 | Pantalla | Archivo `.html` propio | Navegación `Home <-> Pantalla` | Imagen o icono | Evento `(click)` visible | `@if` / `@switch` y `@for` | Estado |
 | :--- | :---: | :---: | :---: | :---: | :---: | :--- |
-| **Home** | Pendiente | `/home` -> `/login`, `/nurse-list`, `/nurse-search` | Pendiente | Pendiente | Pendiente | Pendiente (`#2`) |
+| **Home** | `home.component.html` | `/home` -> `/login`, `/nurse-list`, `/nurse-search` | `nurse-logo.png` + SVG | `selectShift()` / `cycleShift()` | `@switch` + `@for` | Completado (`PR #9`) |
 | **Login** | Pendiente | `/login` <-> `/home` | Pendiente | Pendiente | Pendiente | En desarrollo (`#3`) |
 | **Nurse List** | Pendiente | `/nurse-list` <-> `/home` | Pendiente | Pendiente | Pendiente | En desarrollo (`#4`) |
 | **Nurse Search** | Pendiente | `/nurse-search` <-> `/home` | Pendiente | Pendiente | Pendiente | Pendiente (`#5`) |
