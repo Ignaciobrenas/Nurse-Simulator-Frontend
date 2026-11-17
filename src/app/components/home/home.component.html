@@ -1,0 +1,139 @@
+<div class="hospital-home">
+  <header class="top-bar">
+    <div class="top-bar-inner">
+      <div class="brand-group">
+        <img
+          class="brand-logo"
+          src="nurse-logo.png"
+          alt="Nurse Simulator Hospital Logo"
+          width="52"
+          height="52"
+        />
+        <div>
+          <h1>Nurse Simulator</h1>
+          <p class="brand-subtitle">Hospital Nursing Staff Portal</p>
+        </div>
+      </div>
+
+      <span class="unit-badge">Nursing Station · Active</span>
+    </div>
+  </header>
+
+  <main class="workspace">
+    <section class="shift-card" aria-label="Ward shift status">
+      <div class="shift-details">
+        <span class="shift-eyebrow">Current Ward Shift</span>
+        <div class="shift-title-row">
+          <h2 class="shift-value" data-testid="shift-value">{{ activeShift() }} Shift</h2>
+          <span class="status-pill" [class.status-pill--night]="activeShift() === 'Night'">
+            {{ activeShift() === 'Night' ? 'On-Call Guard' : 'Standard Duty' }}
+          </span>
+        </div>
+
+        @switch (activeShift()) {
+          @case ('Morning') {
+            <p class="shift-note" data-testid="shift-note">
+              Schedule: 07:00 – 15:00 · Primary care, medication rounds, and outpatient intake.
+            </p>
+          }
+          @case ('Afternoon') {
+            <p class="shift-note" data-testid="shift-note">
+              Schedule: 15:00 – 23:00 · Floor shift handover and inpatient care follow-up.
+            </p>
+          }
+          @case ('Night') {
+            <p class="shift-note" data-testid="shift-note">
+              Schedule: 23:00 – 07:00 · Night ward monitoring and emergency guard rotation.
+            </p>
+          }
+        }
+      </div>
+
+      <div class="shift-controls">
+        <div class="shift-tabs" role="group" aria-label="Select ward shift">
+          @for (shift of shifts; track shift) {
+            <button
+              type="button"
+              class="shift-tab"
+              [class.shift-tab--active]="activeShift() === shift"
+              (click)="selectShift(shift)"
+            >
+              {{ shift }}
+            </button>
+          }
+        </div>
+
+        <button type="button" class="shift-cycle-btn" (click)="cycleShift()">Switch Shift</button>
+      </div>
+    </section>
+
+    <section class="modules-section" aria-label="Application screens">
+      <div class="section-head">
+        <h2>Nursing Modules</h2>
+        <p>Select a module to open the corresponding hospital view.</p>
+      </div>
+
+      <div class="modules-grid">
+        @for (screen of screens; track screen.route) {
+          <a class="module-card" [routerLink]="screen.route">
+            <div class="module-top">
+              <span class="module-icon" aria-hidden="true">
+                @switch (screen.icon) {
+                  @case ('login') {
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M12 3l7 3v5c0 5-3.5 8.5-7 10-3.5-1.5-7-5-7-10V6l7-3Z"
+                      />
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M9.5 12l1.8 1.8 3.5-3.6"
+                      />
+                    </svg>
+                  }
+                  @case ('list') {
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M16 19v-1a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v1"
+                      />
+                      <circle cx="9.5" cy="7" r="3.5" />
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M17 8h4m-4 4h4" />
+                    </svg>
+                  }
+                  @case ('search') {
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                      <circle cx="11" cy="11" r="6.5" />
+                      <path stroke-linecap="round" stroke-linejoin="round" d="m16 16 4.5 4.5" />
+                    </svg>
+                  }
+                }
+              </span>
+
+              <span class="module-category">{{ screen.category }}</span>
+            </div>
+
+            <h3>{{ screen.title }}</h3>
+            <p class="module-desc">{{ screen.description }}</p>
+
+            <span class="module-cta">
+              {{ screen.cta }}
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                aria-hidden="true"
+              >
+                <path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14m-6-6 6 6-6 6" />
+              </svg>
+            </span>
+          </a>
+        }
+      </div>
+    </section>
+  </main>
+</div>
