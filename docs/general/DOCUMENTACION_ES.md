@@ -95,13 +95,40 @@ Siguiendo las pautas del enunciado (`angular.dev/tutorials` -> *Learn Angular*),
 
 ### 5.3. Pantalla de Validación de Login (`Login`) — Christopher Roger Tito (`#3`)
 - **Rama:** `3-develop-login-component-with-validation-and-role-switcher`
-- **Estado:** `[Pendiente de completar y documentar tras el merge a staging]`
-- **Puntos a documentar:**
-  - Generación del componente (`ng generate component ...`) con archivo `.html` propio y ruta `/login` (`Home <-> Login`).
-  - Imagen o icono incorporado en la vista.
-  - Interacción `(click)` modificando un valor visible (estado/validación simulada en vista, sin backend).
-  - Uso de `@if` o `@switch` y de `@for`.
-  - Capturas en [`docs/screens/login/`](../screens/login/).
+- **Pull Request:** [PR #10](https://github.com/Ignaciobrenas/Nurse-Simulator-Frontend/pull/10) (abierta hacia `staging`, pendiente de revisión)
+- **Archivos principales:** `src/app/components/login/` (`login.component.ts`, `login.component.html`, `login.component.css`, `login.component.spec.ts`) y `src/app/app.routes.ts`.
+- **Implementación y cumplimiento de pautas PR06:**
+  - **HTML propio:** componente standalone generado con `ng generate component components/login`, con plantilla dedicada `login.component.html` y estilos encapsulados que reutilizan los tokens `--ns-*` de `src/styles.css`. El diseño tiene dos columnas: un panel informativo con degradado verde y la tarjeta del formulario (una sola columna en móvil).
+  - **Validación simulada (sin backend):** tres cuentas de prueba (una por rol) definidas en `DEMO_ACCOUNTS`. Los campos `username` y `password` siguen el contrato del endpoint `POST /nurse/login` del backend, para facilitar la conexión real en una fase posterior.
+    - Usuario obligatorio, mínimo 3 caracteres y solo letras, números, `.` y `_`.
+    - Contraseña obligatoria y de mínimo 6 caracteres.
+    - Las credenciales solo se aceptan si coinciden con el rol seleccionado.
+    - Tras 3 intentos fallidos el formulario se bloquea hasta pulsar `Reset form`.
+  - **Imagen e iconos:** logotipo hospitalario `<img src="nurse-logo.png">` en la barra superior y en el panel lateral, e iconos SVG (flecha de retorno, checks de la lista y escudo de acceso concedido).
+  - **Interacción `(click)`:**
+    - `selectRole(role.id)` cambia el rol activo y actualiza el título visible `Sign in as …` y la descripción del rol.
+    - `togglePassword()` muestra u oculta la contraseña y cambia el texto del botón (`Show` / `Hide`).
+    - `fillDemoAccount()` rellena el formulario con la cuenta de prueba del rol.
+    - `submit()` actualiza el contador de intentos restantes o muestra el panel de bienvenida.
+    - `resetForm()` (`Sign out` / `Reset form`) devuelve la vista a su estado inicial.
+  - **Control de flujo (`@if`, `@switch` y `@for`):**
+    - `@if` para los errores de cada campo, las alertas de credenciales incorrectas y de bloqueo, y el panel de bienvenida (`@if (status() === 'success' && loggedUser(); as user)` con su bloque `@else`).
+    - `@switch (selectedRole())` para la descripción de cada rol.
+    - `@for (role of roles; track role.id)` para el selector de roles y `@for (feature of features; track feature.title)` para la lista de ventajas del panel lateral.
+  - **Navegación (`RouterLink`):** ruta `{ path: 'login', component: Login }` registrada en `src/app/app.routes.ts`. `Home -> Login` mediante la tarjeta *Nurse Login* de la Home y `Login -> Home` mediante `Back to Home` (barra superior) y `Go to Home` (panel de bienvenida).
+  - **Verificación:**
+    - `ng build` sin errores ni advertencias (CSS del componente dentro del presupuesto de 4 kB).
+    - `ng test` con 14/14 tests superados en 3 archivos, de los cuales 9 son nuevos en `login.component.spec.ts`: renderizado, navegación, cambio de rol, validación, mostrar/ocultar contraseña, credenciales incorrectas, bloqueo, rol incorrecto y login/logout.
+    - Navegación `Home -> Login -> Home` comprobada en Chrome sin errores en consola.
+- **Evidencias:** capturas en [`docs/screens/login/`](../screens/login/):
+  - [`login-home-link.png`](../screens/login/login-home-link.png) — Tarjeta *Nurse Login* de la Home que navega a `/login`.
+  - [`login-default.png`](../screens/login/login-default.png) — Vista inicial con el logotipo, el selector de roles (`@for`) y el formulario.
+  - [`login-role-switch.png`](../screens/login/login-role-switch.png) — Tras pulsar `Head Nurse` (`(click)` -> `Sign in as Head Nurse` y descripción mediante `@switch`).
+  - [`login-validation-errors.png`](../screens/login/login-validation-errors.png) — Envío con campos vacíos: errores de validación por campo (`@if`).
+  - [`login-invalid-credentials.png`](../screens/login/login-invalid-credentials.png) — Credenciales incorrectas con intentos restantes y contraseña visible (`Hide`).
+  - [`login-locked.png`](../screens/login/login-locked.png) — Formulario bloqueado tras 3 intentos fallidos.
+  - [`login-success.png`](../screens/login/login-success.png) — Acceso concedido como `Supervisor` con el panel de bienvenida y el enlace `Go to Home`.
+  - [`login-mobile.png`](../screens/login/login-mobile.png) — Comprobación de diseño responsive en vista móvil (`390x844`).
 
 ### 5.4. Pantalla de Enfermeros Registrados (`Nurse List`) — Gorka Ramirez (`#4`)
 - **Rama:** `4-develop-registered-nurses-list-screen-component`
@@ -128,7 +155,7 @@ Siguiendo las pautas del enunciado (`angular.dev/tutorials` -> *Learn Angular*),
 | Pantalla | Archivo `.html` propio | Navegación `Home <-> Pantalla` | Imagen o icono | Evento `(click)` visible | `@if` / `@switch` y `@for` | Estado |
 | :--- | :---: | :---: | :---: | :---: | :---: | :--- |
 | **Home** | `home.component.html` | `/home` -> `/login`, `/nurse-list`, `/nurse-search` | `nurse-logo.png` + SVG | `selectShift()` / `cycleShift()` | `@switch` + `@for` | Completado (`PR #9`) |
-| **Login** | Pendiente | `/login` <-> `/home` | Pendiente | Pendiente | Pendiente | En desarrollo (`#3`) |
+| **Login** | `login.component.html` | `/login` <-> `/home` | `nurse-logo.png` + SVG | `selectRole()` / `togglePassword()` / `submit()` | `@if` + `@switch` + `@for` | Completado (`PR #10`, en revisión) |
 | **Nurse List** | Pendiente | `/nurse-list` <-> `/home` | Pendiente | Pendiente | Pendiente | En desarrollo (`#4`) |
 | **Nurse Search** | Pendiente | `/nurse-search` <-> `/home` | Pendiente | Pendiente | Pendiente | Pendiente (`#5`) |
 
@@ -154,7 +181,8 @@ Nurse-Simulator-Frontend/
 ├── src/
 │   ├── app/
 │   │   ├── components/
-│   │   │   └── home/                   # Componente Home (Issue #2)
+│   │   │   ├── home/                   # Componente Home (Issue #2)
+│   │   │   └── login/                  # Componente Login (Issue #3)
 │   │   ├── app.component.css
 │   │   ├── app.component.html          # Contenedor base con <router-outlet />
 │   │   ├── app.component.spec.ts

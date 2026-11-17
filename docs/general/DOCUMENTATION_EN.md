@@ -95,13 +95,40 @@ Following the specification (`angular.dev/tutorials` -> *Learn Angular*), the 10
 
 ### 5.3. Login Screen Component (`Login`) — Christopher Roger Tito (`#3`)
 - **Branch:** `3-develop-login-component-with-validation-and-role-switcher`
-- **Status:** `[Pending completion and documentation after merging to staging]`
-- **Items to document:**
-  - Component generated with `ng generate component ...`, dedicated `.html` file, and `/login` route (`Home <-> Login`).
-  - Image or icon included in the view.
-  - `(click)` interaction modifying a visible value (frontend validation feedback, no backend).
-  - Usage of `@if` / `@switch` and `@for`.
-  - Screenshots in [`docs/screens/login/`](../screens/login/).
+- **Pull Request:** [PR #10](https://github.com/Ignaciobrenas/Nurse-Simulator-Frontend/pull/10) (open against `staging`, pending review)
+- **Key files:** `src/app/components/login/` (`login.component.ts`, `login.component.html`, `login.component.css`, `login.component.spec.ts`) and `src/app/app.routes.ts`.
+- **Implementation & PR06 compliance:**
+  - **Own HTML file:** standalone component generated with `ng generate component components/login`, with a dedicated `login.component.html` template and encapsulated styles reusing the `--ns-*` tokens from `src/styles.css`. Two-column layout: an information panel with a green gradient and the form card (single column on mobile).
+  - **Simulated validation (no backend):** three demo accounts (one per role) defined in `DEMO_ACCOUNTS`. The `username` and `password` fields follow the backend `POST /nurse/login` contract, so the real API can be connected in a later phase.
+    - Username required, at least 3 characters, only letters, numbers, `.` and `_`.
+    - Password required, at least 6 characters.
+    - Credentials are only accepted when they match the selected role.
+    - After 3 failed attempts the form is locked until `Reset form` is clicked.
+  - **Image & icons:** hospital emblem `<img src="nurse-logo.png">` in the top bar and side panel, plus SVG icons (back arrow, feature checks and access-granted shield).
+  - **Click interaction:**
+    - `selectRole(role.id)` changes the active role and updates the visible `Sign in as …` heading and role description.
+    - `togglePassword()` shows or hides the password and switches the button label (`Show` / `Hide`).
+    - `fillDemoAccount()` fills the form with the selected role's demo account.
+    - `submit()` updates the remaining attempts counter or shows the welcome panel.
+    - `resetForm()` (`Sign out` / `Reset form`) restores the initial view.
+  - **Control flow (`@if`, `@switch` and `@for`):**
+    - `@if` for field errors, invalid-credentials and lock alerts, and the welcome panel (`@if (status() === 'success' && loggedUser(); as user)` with its `@else` block).
+    - `@switch (selectedRole())` for each role description.
+    - `@for (role of roles; track role.id)` for the role switcher and `@for (feature of features; track feature.title)` for the side panel feature list.
+  - **Navigation (`RouterLink`):** `{ path: 'login', component: Login }` registered in `src/app/app.routes.ts`. `Home -> Login` through the Home *Nurse Login* card and `Login -> Home` through `Back to Home` (top bar) and `Go to Home` (welcome panel).
+  - **Verification:**
+    - Clean `ng build` with zero warnings (component CSS within the 4 kB budget).
+    - `ng test` passing 14/14 tests across 3 files, 9 of them new in `login.component.spec.ts`: rendering, navigation, role switch, validation, password toggle, invalid credentials, lock, wrong role and login/logout.
+    - `Home -> Login -> Home` navigation checked in Chrome with no console errors.
+- **Evidence:** screenshots in [`docs/screens/login/`](../screens/login/):
+  - [`login-home-link.png`](../screens/login/login-home-link.png) — Home *Nurse Login* card that navigates to `/login`.
+  - [`login-default.png`](../screens/login/login-default.png) — Initial view with the logo, the role switcher (`@for`) and the form.
+  - [`login-role-switch.png`](../screens/login/login-role-switch.png) — After clicking `Head Nurse` (`(click)` -> `Sign in as Head Nurse` and description rendered via `@switch`).
+  - [`login-validation-errors.png`](../screens/login/login-validation-errors.png) — Empty form submitted: per-field validation errors (`@if`).
+  - [`login-invalid-credentials.png`](../screens/login/login-invalid-credentials.png) — Invalid credentials with remaining attempts and visible password (`Hide`).
+  - [`login-locked.png`](../screens/login/login-locked.png) — Form locked after 3 failed attempts.
+  - [`login-success.png`](../screens/login/login-success.png) — Access granted as `Supervisor` with the welcome panel and the `Go to Home` link.
+  - [`login-mobile.png`](../screens/login/login-mobile.png) — Mobile responsive layout check (`390x844`).
 
 ### 5.4. Registered Nurses List Screen Component (`Nurse List`) — Gorka Ramirez (`#4`)
 - **Branch:** `4-develop-registered-nurses-list-screen-component`
@@ -128,7 +155,7 @@ Following the specification (`angular.dev/tutorials` -> *Learn Angular*), the 10
 | Screen | Own `.html` file | `Home <-> Screen` Navigation | Image or Icon | `(click)` modifying view | `@if` / `@switch` & `@for` | Status |
 | :--- | :---: | :---: | :---: | :---: | :---: | :--- |
 | **Home** | `home.component.html` | `/home` -> `/login`, `/nurse-list`, `/nurse-search` | `nurse-logo.png` + SVG | `selectShift()` / `cycleShift()` | `@switch` + `@for` | Completed (`PR #9`) |
-| **Login** | Pending | `/login` <-> `/home` | Pending | Pending | Pending | In progress (`#3`) |
+| **Login** | `login.component.html` | `/login` <-> `/home` | `nurse-logo.png` + SVG | `selectRole()` / `togglePassword()` / `submit()` | `@if` + `@switch` + `@for` | Completed (`PR #10`, in review) |
 | **Nurse List** | Pending | `/nurse-list` <-> `/home` | Pending | Pending | Pending | In progress (`#4`) |
 | **Nurse Search** | Pending | `/nurse-search` <-> `/home` | Pending | Pending | Pending | Pending (`#5`) |
 
@@ -154,7 +181,8 @@ Nurse-Simulator-Frontend/
 ├── src/
 │   ├── app/
 │   │   ├── components/
-│   │   │   └── home/                   # Home component (Issue #2)
+│   │   │   ├── home/                   # Home component (Issue #2)
+│   │   │   └── login/                  # Login component (Issue #3)
 │   │   ├── app.component.css
 │   │   ├── app.component.html          # Root shell with <router-outlet />
 │   │   ├── app.component.spec.ts
