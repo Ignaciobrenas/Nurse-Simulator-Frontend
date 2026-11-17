@@ -1,4 +1,22 @@
-/* Base global styles */
+/* Shared hospital theme tokens (white & clinical green) for Nurse Simulator */
+:root {
+  --ns-bg: #f4f8f5;
+  --ns-surface: #ffffff;
+  --ns-surface-muted: #edf5f0;
+  --ns-border: #d7e4dc;
+  --ns-border-hover: #7bb89b;
+  --ns-green: #0f766e;
+  --ns-green-strong: #047857;
+  --ns-green-hover: #065f46;
+  --ns-green-soft: #e6f4ee;
+  --ns-text: #13261e;
+  --ns-text-muted: #4b6559;
+  --ns-amber-bg: #fef3c7;
+  --ns-amber-text: #92400e;
+  --ns-radius-lg: 14px;
+  --ns-radius-md: 10px;
+}
+
 *,
 *::before,
 *::after {
@@ -7,7 +25,11 @@
 
 body {
   margin: 0;
+  min-height: 100vh;
+  background-color: var(--ns-bg);
+  color: var(--ns-text);
   font-family:
+    'Inter',
     system-ui,
     -apple-system,
     'Segoe UI',
@@ -15,4 +37,5 @@ body {
     Helvetica,
     Arial,
     sans-serif;
+  -webkit-font-smoothing: antialiased;
 }
