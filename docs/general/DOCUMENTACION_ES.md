@@ -95,7 +95,7 @@ Siguiendo las pautas del enunciado (`angular.dev/tutorials` -> *Learn Angular*),
 
 ### 5.3. Pantalla de Validación de Login (`Login`) — Christopher Roger Tito (`#3`)
 - **Rama:** `3-develop-login-component-with-validation-and-role-switcher`
-- **Pull Request:** [PR #10](https://github.com/Ignaciobrenas/Nurse-Simulator-Frontend/pull/10) (abierta hacia `staging`, pendiente de revisión)
+- **Pull Request:** [PR #10](https://github.com/Ignaciobrenas/Nurse-Simulator-Frontend/pull/10) (`MERGED` en `staging`)
 - **Archivos principales:** `src/app/components/login/` (`login.component.ts`, `login.component.html`, `login.component.css`, `login.component.spec.ts`) y `src/app/app.routes.ts`.
 - **Implementación y cumplimiento de pautas PR06:**
   - **HTML propio:** componente standalone generado con `ng generate component components/login`, con plantilla dedicada `login.component.html` y estilos encapsulados que reutilizan los tokens `--ns-*` de `src/styles.css`. El diseño tiene dos columnas: un panel informativo con degradado verde y la tarjeta del formulario (una sola columna en móvil).
@@ -132,21 +132,69 @@ Siguiendo las pautas del enunciado (`angular.dev/tutorials` -> *Learn Angular*),
 
 ### 5.4. Pantalla de Enfermeros Registrados (`Nurse List`) — Gorka Ramirez (`#4`)
 - **Rama:** `4-develop-registered-nurses-list-screen-component`
-- **Estado:** `[Pendiente de completar y documentar tras el merge a staging]`
-- **Puntos a documentar:**
-  - Generación del componente (`ng generate component ...`) con archivo `.html` propio y ruta `/nurse-list` (`Home <-> Registered Nurses`).
-  - Visualización de datos locales de ejemplo de enfermeros registrados (sin backend).
-  - Imagen o icono, interacción `(click)` modificando un valor visible, y uso de `@if` o `@switch` y de `@for`.
-  - Capturas en [`docs/screens/nurse-list/`](../screens/nurse-list/).
+- **Pull Request:** [PR #11](https://github.com/Ignaciobrenas/Nurse-Simulator-Frontend/pull/11) (`MERGED` en `staging`)
+- **Archivos principales:** `src/app/components/nurse-list/` (`nurse-list.component.ts`, `nurse-list.component.html`, `nurse-list.component.css`, `nurse-list.component.spec.ts`), `src/app/models/nurse.model.ts`, `src/app/mocks/nurses.mock.ts` y `src/app/app.routes.ts`.
+- **Implementación y cumplimiento de pautas PR06:**
+  - **HTML propio:** componente standalone `NurseList` con plantilla dedicada `src/app/components/nurse-list/nurse-list.component.html` y estilos encapsulados que reutilizan la paleta hospitalaria (`--ns-*` en `src/styles.css`).
+  - **Datos simulados (sin backend):** modelo `Nurse` (`src/app/models/nurse.model.ts`) y listado estático `MOCK_NURSES` con 10 enfermeros (`src/app/mocks/nurses.mock.ts`), mostrando contadores globales (`filteredNurses().length` de `totalCount()` y `onDutyCount()`).
+  - **Imagen e iconos:** logotipo hospitalario `<img src="nurse-logo.png">` en la cabecera e iconos SVG para retorno a Home, avatar de enfermero, ubicación de planta (`roomOrWard`), cierre del detalle y estado vacío/placeholder.
+  - **Interacción `(click)`:**
+    - `selectFilter(shift)` (`All`, `Morning`, `Afternoon`, `Night`) y botón `Cycle Filter` (`cycleFilter()`) para filtrar el personal por turno y actualizar el título y contador visibles.
+    - `selectNurse(nurse)` al pulsar cualquier tarjeta del directorio para mostrar su ficha completa en el panel superior (`inspection-card`).
+    - `clearSelection()` (botón `×`) para cerrar el panel de detalle y mostrar el placeholder informativo.
+    - `selectFilter('All')` (`Reset Filter`) en el estado vacío cuando no hay coincidencias.
+  - **Control de flujo (`@if`, `@switch` y `@for`):**
+    - `@if (selectedNurse(); as nurse)` con `@else` para alternar entre el panel de inspección y el placeholder (`nurse-placeholder`).
+    - `@if (filteredNurses().length > 0)` con `@else` para renderizar la cuadrícula de tarjetas o el estado vacío.
+    - `@switch (activeFilter())` para el texto descriptivo del turno filtrado y `@switch (nurse.status)` para las insignias de estado (`On Duty`, `On Call`, `Off Duty`) en detalle y tarjetas.
+    - `@for (shift of filterShifts; track shift)` para las pestañas de filtro y `@for (nurse of filteredNurses(); track nurse.id)` para las tarjetas del directorio.
+  - **Navegación (`RouterLink`):** ruta `{ path: 'nurse-list', component: NurseList }` registrada en `src/app/app.routes.ts`. Acceso `Home -> Nurse List` desde la tarjeta *Registered Nurses* y retorno `Nurse List -> Home` mediante `Return to Home` (barra superior) y `Return to Hospital Home Portal` (pie).
+  - **Verificación:**
+    - `ng test --watch=false` con 5/5 tests superados en `nurse-list.component.spec.ts` (dentro de la suite completa con 28/28 tests en 5 archivos): creación, logotipo y enlace a `/home`, renderizado de los 10 enfermeros, filtrado por turno/ciclo y selección/cierre del panel de detalle.
+    - `ng build` genera el bundle correctamente (con advertencia de presupuesto CSS en `nurse-list.component.css`: `6.29 kB` frente al límite de aviso de `4.00 kB`).
+- **Evidencias:** capturas en [`docs/screens/nurse-list/`](../screens/nurse-list/):
+  - [`01_home_to_nurse_list.png`](../screens/nurse-list/01_home_to_nurse_list.png) — Vista de `Home` con el módulo *Registered Nurses* hacia `/nurse-list`.
+  - [`02_nurse_list_default_all.png`](../screens/nurse-list/02_nurse_list_default_all.png) — Vista inicial con el filtro `All` (`10 of 10 Staff`, `7 On Duty`), detalle de `Ana` (`ID #1`) y primeras tarjetas.
+  - [`02_nurse_list_default_all_fullpage.png`](../screens/nurse-list/02_nurse_list_default_all_fullpage.png) — Captura de página completa con los 10 enfermeros del directorio y el enlace inferior a `Home`.
+  - [`03_nurse_list_filter_morning.png`](../screens/nurse-list/03_nurse_list_filter_morning.png) — Filtro `Morning` (`(click)` -> `Morning Shift Nurses`, `4 of 10 Staff`, franja `07:00 – 15:00` vía `@switch`).
+  - [`04_nurse_list_filter_afternoon.png`](../screens/nurse-list/04_nurse_list_filter_afternoon.png) — Filtro `Afternoon` (`Afternoon Shift Nurses`, `3 of 10 Staff`, franja `15:00 – 23:00`).
+  - [`05_nurse_list_filter_night.png`](../screens/nurse-list/05_nurse_list_filter_night.png) — Filtro `Night` (`Night Shift Nurses`, `3 of 10 Staff`, franja `23:00 – 07:00`).
+  - [`06_nurse_list_nurse_selected.png`](../screens/nurse-list/06_nurse_list_nurse_selected.png) — Selección de `Lucia` (`ID #3`, *Pediatrics*) tras pulsar su tarjeta (`selectNurse()`).
+  - [`07_nurse_list_placeholder.png`](../screens/nurse-list/07_nurse_list_placeholder.png) — Panel de inspección cerrado (`clearSelection()`), mostrando el bloque `@else` de placeholder.
+  - [`08_nurse_list_mobile_viewport.png`](../screens/nurse-list/08_nurse_list_mobile_viewport.png) — Comprobación responsive en móvil (cabecera, controles de filtro y detalle de `Ana`).
+  - [`09_nurse_list_mobile_fullpage.png`](../screens/nurse-list/09_nurse_list_mobile_fullpage.png) — Vista móvil de página completa con la lista apilada en una columna.
+  - [`10_nurse_list_mobile_morning.png`](../screens/nurse-list/10_nurse_list_mobile_morning.png) — Vista móvil con el filtro `Morning` aplicado (`4 of 10 Staff`).
+  - [`11_nurse_list_mobile_night.png`](../screens/nurse-list/11_nurse_list_mobile_night.png) — Vista móvil con el filtro `Night` aplicado (`3 of 10 Staff`).
+  - [`12_nurse_list_mobile_selected_detail.png`](../screens/nurse-list/12_nurse_list_mobile_selected_detail.png) — Vista móvil tras seleccionar a `Maria Garcia` (`ID #4`, etiqueta `On Call Guard` vía `@switch`).
 
 ### 5.5. Pantalla de Búsqueda por Nombre (`Nurse Search`) — Zehao Yin (`#5`)
-- **Rama:** `[Pendiente de crear/enlazar desde staging]`
-- **Estado:** `[Pendiente de completar y documentar tras el merge a staging]`
-- **Puntos a documentar:**
-  - Generación del componente (`ng generate component ...`) con archivo `.html` propio y ruta `/nurse-search` (`Home <-> Nurse Search`).
-  - Simulación de búsqueda por nombre mostrando cómo se vería con 3 resultados (datos estáticos, sin backend).
-  - Imagen o icono, interacción `(click)` modificando un valor visible, y uso de `@if` o `@switch` y de `@for`.
-  - Capturas en [`docs/screens/nurse-search/`](../screens/nurse-search/).
+- **Rama:** `5-develop-nurse-search-screen-component`
+- **Pull Request:** [PR #12](https://github.com/Ignaciobrenas/Nurse-Simulator-Frontend/pull/12) (`MERGED` en `staging`)
+- **Archivos principales:** `src/app/components/nurse-search/` (`nurse-search.component.ts`, `nurse-search.component.html`, `nurse-search.component.css`, `nurse-search.component.spec.ts`), `src/app/models/nurse.model.ts`, `src/app/mocks/nurses.mock.ts` y `src/app/app.routes.ts`.
+- **Implementación y cumplimiento de pautas PR06:**
+  - **HTML propio:** componente standalone `NurseSearch` con plantilla dedicada `src/app/components/nurse-search/nurse-search.component.html` y estilos encapsulados coherentes con la paleta `--ns-*`.
+  - **Simulación de búsqueda por nombre (sin backend):** búsqueda reactiva sobre `MOCK_NURSES` filtrando por `nurse.name` sin distinguir mayúsculas/minúsculas. Incluye la consulta inicial `DEFAULT_QUERY = 'An'`, que muestra exactamente **3 resultados simulados** (`Ana`, `Antonio Garcia`, `Manuel Garcia`), además de chips de búsqueda rápida (`An`, `Garcia`, `Lucia`, `Pablo`).
+  - **Imagen e iconos:** logotipo hospitalario `<img src="nurse-logo.png">` en la barra superior e iconos SVG (lupa del buscador, avatar de enfermero en resultados y flechas de retorno a Home).
+  - **Interacción `(click)`:**
+    - `search()` (botón `Search` / envío del formulario) ejecuta el filtro sobre el texto introducido.
+    - `applySuggestion(name)` (chips rápidos `An`, `Garcia`, `Lucia`, `Pablo` y botón `Show sample results`) aplica la consulta y actualiza los resultados visibles.
+    - `clearSearch()` (botón `Clear`) limpia el término de búsqueda y muestra el estado vacío.
+    - `selectNurse(nurse)` al pulsar cualquier tarjeta de resultado alterna el despliegue de su ficha detallada (`Email`, `Phone`, `Ward / Room`, `Experience`).
+  - **Control de flujo (`@if`, `@switch` y `@for`):**
+    - `@if (searchTerm())` con `@else` para el resumen de resultados; `@if (!searchTerm())` / `@else if (results().length === 0)` / `@else` para alternar entre estado sin término, sin coincidencias y lista de resultados; `@if (selectedNurse()?.id === nurse.id)` para los detalles expandibles de la tarjeta seleccionada.
+    - `@switch (nurse.status)` para mostrar el estado (`On Duty`, `On Call`, `Off Duty`) en cada tarjeta.
+    - `@for (name of suggestions; track name)` para los chips de búsqueda rápida y `@for (nurse of results(); track nurse.id; let i = $index)` para las tarjetas numeradas.
+  - **Navegación (`RouterLink`):** ruta `{ path: 'nurse-search', component: NurseSearch }` registrada en `src/app/app.routes.ts`. Acceso `Home -> Nurse Search` desde la tarjeta *Nurse Search* y retorno `Nurse Search -> Home` desde `Return to Home` (barra superior) y `Return to Hospital Home Portal` (pie).
+  - **Verificación:**
+    - `ng test --watch=false` con 9/9 tests superados en `nurse-search.component.spec.ts` (dentro de la suite completa con 28/28 tests en 5 archivos): creación, logotipo/icono/enlaces, 3 resultados por defecto para `'An'`, búsqueda por nombre escrito, restauración desde estado sin resultados, chips rápidos, estado sin coincidencias, limpieza de búsqueda y despliegue/cierre de detalles.
+    - `ng build` genera el bundle correctamente (con advertencia de presupuesto CSS en `nurse-search.component.css`: `5.14 kB` frente al límite de aviso de `4.00 kB`).
+- **Evidencias:** capturas en [`docs/screens/nurse-search/`](../screens/nurse-search/):
+  - [`searchDefault.png`](../screens/nurse-search/searchDefault.png) — Vista inicial con la consulta por defecto `"An"` mostrando 3 resultados (`Ana`, `Antonio Garcia`, `Manuel Garcia`).
+  - [`searchTypedName.png`](../screens/nurse-search/searchTypedName.png) — Búsqueda por nombre (`"lucia"`) mostrando `1 result for "lucia"` y el chip `Lucia` activo.
+  - [`searchResultDetails.png`](../screens/nurse-search/searchResultDetails.png) — Estado tras pulsar una tarjeta (`(click)` -> detalles expandidos de `Antonio Garcia` con email, teléfono, planta y experiencia vía `@if`).
+  - [`searchNoResults.png`](../screens/nurse-search/searchNoResults.png) — Búsqueda sin coincidencias (`"Pablo"`) con el bloque `@else if` y el botón `Show sample results`.
+  - [`searchEmpty.png`](../screens/nurse-search/searchEmpty.png) — Estado tras pulsar `Clear`, mostrando el mensaje `@if (!searchTerm())`.
+  - [`searchMobile.png`](../screens/nurse-search/searchMobile.png) — Comprobación de diseño responsive en vista móvil con cabecera apilada, buscador y los 3 resultados de `"An"`.
 
 ---
 
@@ -155,9 +203,9 @@ Siguiendo las pautas del enunciado (`angular.dev/tutorials` -> *Learn Angular*),
 | Pantalla | Archivo `.html` propio | Navegación `Home <-> Pantalla` | Imagen o icono | Evento `(click)` visible | `@if` / `@switch` y `@for` | Estado |
 | :--- | :---: | :---: | :---: | :---: | :---: | :--- |
 | **Home** | `home.component.html` | `/home` -> `/login`, `/nurse-list`, `/nurse-search` | `nurse-logo.png` + SVG | `selectShift()` / `cycleShift()` | `@switch` + `@for` | Completado (`PR #9`) |
-| **Login** | `login.component.html` | `/login` <-> `/home` | `nurse-logo.png` + SVG | `selectRole()` / `togglePassword()` / `submit()` | `@if` + `@switch` + `@for` | Completado (`PR #10`, en revisión) |
-| **Nurse List** | Pendiente | `/nurse-list` <-> `/home` | Pendiente | Pendiente | Pendiente | En desarrollo (`#4`) |
-| **Nurse Search** | Pendiente | `/nurse-search` <-> `/home` | Pendiente | Pendiente | Pendiente | Pendiente (`#5`) |
+| **Login** | `login.component.html` | `/login` <-> `/home` | `nurse-logo.png` + SVG | `selectRole()` / `togglePassword()` / `submit()` | `@if` + `@switch` + `@for` | Completado (`PR #10`) |
+| **Nurse List** | `nurse-list.component.html` | `/nurse-list` <-> `/home` | `nurse-logo.png` + SVG | `selectFilter()` / `cycleFilter()` / `selectNurse()` / `clearSelection()` | `@if` + `@switch` + `@for` | Completado (`PR #11`) |
+| **Nurse Search** | `nurse-search.component.html` | `/nurse-search` <-> `/home` | `nurse-logo.png` + SVG | `search()` / `applySuggestion()` / `clearSearch()` / `selectNurse()` | `@if` + `@switch` + `@for` | Completado (`PR #12`) |
 
 ---
 
@@ -165,6 +213,8 @@ Siguiendo las pautas del enunciado (`angular.dev/tutorials` -> *Learn Angular*),
 
 ```text
 Nurse-Simulator-Frontend/
+├── .github/
+│   └── pull_request_template.md        # Plantilla oficial de Pull Request
 ├── docs/
 │   ├── general/
 │   │   ├── DOCUMENTACION_ES.md         # Documentación técnica en español
@@ -182,7 +232,13 @@ Nurse-Simulator-Frontend/
 │   ├── app/
 │   │   ├── components/
 │   │   │   ├── home/                   # Componente Home (Issue #2)
-│   │   │   └── login/                  # Componente Login (Issue #3)
+│   │   │   ├── login/                  # Componente Login (Issue #3)
+│   │   │   ├── nurse-list/             # Componente Nurse List (Issue #4)
+│   │   │   └── nurse-search/           # Componente Nurse Search (Issue #5)
+│   │   ├── mocks/
+│   │   │   └── nurses.mock.ts          # Datos simulados de enfermeros (MOCK_NURSES)
+│   │   ├── models/
+│   │   │   └── nurse.model.ts          # Interfaz y tipos Nurse, ShiftType, NurseStatus
 │   │   ├── app.component.css
 │   │   ├── app.component.html          # Contenedor base con <router-outlet />
 │   │   ├── app.component.spec.ts
@@ -212,7 +268,7 @@ npm install
 
 # 3. Levantar el servidor de desarrollo local
 npm start
-# (equivalente a: ng serve -> http://localhost:4200/)
+# (alternativamente: npm run dev / ng serve -> http://localhost:4200/)
 
 # 4. Compilar y ejecutar tests unitarios
 npm run build

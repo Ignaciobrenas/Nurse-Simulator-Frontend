@@ -95,7 +95,7 @@ Following the specification (`angular.dev/tutorials` -> *Learn Angular*), the 10
 
 ### 5.3. Login Screen Component (`Login`) — Christopher Roger Tito (`#3`)
 - **Branch:** `3-develop-login-component-with-validation-and-role-switcher`
-- **Pull Request:** [PR #10](https://github.com/Ignaciobrenas/Nurse-Simulator-Frontend/pull/10) (open against `staging`, pending review)
+- **Pull Request:** [PR #10](https://github.com/Ignaciobrenas/Nurse-Simulator-Frontend/pull/10) (`MERGED` into `staging`)
 - **Key files:** `src/app/components/login/` (`login.component.ts`, `login.component.html`, `login.component.css`, `login.component.spec.ts`) and `src/app/app.routes.ts`.
 - **Implementation & PR06 compliance:**
   - **Own HTML file:** standalone component generated with `ng generate component components/login`, with a dedicated `login.component.html` template and encapsulated styles reusing the `--ns-*` tokens from `src/styles.css`. Two-column layout: an information panel with a green gradient and the form card (single column on mobile).
@@ -132,21 +132,69 @@ Following the specification (`angular.dev/tutorials` -> *Learn Angular*), the 10
 
 ### 5.4. Registered Nurses List Screen Component (`Nurse List`) — Gorka Ramirez (`#4`)
 - **Branch:** `4-develop-registered-nurses-list-screen-component`
-- **Status:** `[Pending completion and documentation after merging to staging]`
-- **Items to document:**
-  - Component generated with `ng generate component ...`, dedicated `.html` file, and `/nurse-list` route (`Home <-> Registered Nurses`).
-  - Sample registered nurses list displayed from local/static data (no backend).
-  - Image or icon, `(click)` interaction updating visible state, and `@if` / `@switch` + `@for`.
-  - Screenshots in [`docs/screens/nurse-list/`](../screens/nurse-list/).
+- **Pull Request:** [PR #11](https://github.com/Ignaciobrenas/Nurse-Simulator-Frontend/pull/11) (`MERGED` into `staging`)
+- **Key files:** `src/app/components/nurse-list/` (`nurse-list.component.ts`, `nurse-list.component.html`, `nurse-list.component.css`, `nurse-list.component.spec.ts`), `src/app/models/nurse.model.ts`, `src/app/mocks/nurses.mock.ts`, and `src/app/app.routes.ts`.
+- **Implementation & PR06 compliance:**
+  - **Own HTML file:** standalone component `NurseList` with dedicated template `src/app/components/nurse-list/nurse-list.component.html` and encapsulated styles reusing the hospital palette (`--ns-*` CSS tokens in `src/styles.css`).
+  - **Simulated data (no backend):** `Nurse` model (`src/app/models/nurse.model.ts`) and static `MOCK_NURSES` dataset of 10 nurses (`src/app/mocks/nurses.mock.ts`), displaying live roster counters (`filteredNurses().length` of `totalCount()` and `onDutyCount()`).
+  - **Image & icons:** hospital emblem `<img src="nurse-logo.png">` in the top bar plus SVG icons for Home navigation, nurse avatar, ward/room pin (`roomOrWard`), detail panel close button, and placeholder/empty states.
+  - **Click interaction:**
+    - `selectFilter(shift)` (`All`, `Morning`, `Afternoon`, `Night`) and `Cycle Filter` (`cycleFilter()`) filter staff by shift and update the visible heading and counters.
+    - `selectNurse(nurse)` when clicking any roster card displays that nurse's full profile in the top inspection card.
+    - `clearSelection()` (`×` button) closes the detail panel and displays the informative placeholder.
+    - `selectFilter('All')` (`Reset Filter`) resets the filter from the empty state.
+  - **Control flow (`@if`, `@switch` and `@for`):**
+    - `@if (selectedNurse(); as nurse)` with `@else` toggles between the inspection panel and placeholder (`nurse-placeholder`).
+    - `@if (filteredNurses().length > 0)` with `@else` toggles between the roster grid and empty state.
+    - `@switch (activeFilter())` renders the shift schedule description and `@switch (nurse.status)` renders status badges (`On Duty`, `On Call`, `Off Duty`) on both the detail panel and cards.
+    - `@for (shift of filterShifts; track shift)` renders filter tabs and `@for (nurse of filteredNurses(); track nurse.id)` renders roster cards.
+  - **Navigation (`RouterLink`):** `{ path: 'nurse-list', component: NurseList }` registered in `src/app/app.routes.ts`. `Home -> Nurse List` via the *Registered Nurses* module card, and `Nurse List -> Home` via `Return to Home` (top bar) and `Return to Hospital Home Portal` (footer).
+  - **Verification:**
+    - `ng test --watch=false` passing 5/5 tests in `nurse-list.component.spec.ts` (within the full 28/28 suite across 5 files): component creation, logo and `/home` link, rendering all 10 nurses, shift filtering/cycling, and selecting/closing nurse details.
+    - `ng build` generates the bundle cleanly (with a CSS budget warning on `nurse-list.component.css`: `6.29 kB` vs the `4.00 kB` warning budget).
+- **Evidence:** screenshots in [`docs/screens/nurse-list/`](../screens/nurse-list/):
+  - [`01_home_to_nurse_list.png`](../screens/nurse-list/01_home_to_nurse_list.png) — `Home` screen showing the *Registered Nurses* card linking to `/nurse-list`.
+  - [`02_nurse_list_default_all.png`](../screens/nurse-list/02_nurse_list_default_all.png) — Initial view with the `All` filter (`10 of 10 Staff`, `7 On Duty`), `Ana` (`ID #1`) selected, and top roster cards.
+  - [`02_nurse_list_default_all_fullpage.png`](../screens/nurse-list/02_nurse_list_default_all_fullpage.png) — Full-page capture showing all 10 roster cards and the footer link back to `Home`.
+  - [`03_nurse_list_filter_morning.png`](../screens/nurse-list/03_nurse_list_filter_morning.png) — `Morning` filter (`(click)` -> `Morning Shift Nurses`, `4 of 10 Staff`, `07:00 – 15:00` note via `@switch`).
+  - [`04_nurse_list_filter_afternoon.png`](../screens/nurse-list/04_nurse_list_filter_afternoon.png) — `Afternoon` filter (`Afternoon Shift Nurses`, `3 of 10 Staff`, `15:00 – 23:00`).
+  - [`05_nurse_list_filter_night.png`](../screens/nurse-list/05_nurse_list_filter_night.png) — `Night` filter (`Night Shift Nurses`, `3 of 10 Staff`, `23:00 – 07:00`).
+  - [`06_nurse_list_nurse_selected.png`](../screens/nurse-list/06_nurse_list_nurse_selected.png) — Selecting `Lucia` (`ID #3`, Pediatrics) after clicking her card (`selectNurse()`).
+  - [`07_nurse_list_placeholder.png`](../screens/nurse-list/07_nurse_list_placeholder.png) — Inspection panel closed (`clearSelection()`), displaying the `@else` placeholder banner.
+  - [`08_nurse_list_mobile_viewport.png`](../screens/nurse-list/08_nurse_list_mobile_viewport.png) — Mobile responsive viewport check (header, filter controls, and `Ana` inspection card).
+  - [`09_nurse_list_mobile_fullpage.png`](../screens/nurse-list/09_nurse_list_mobile_fullpage.png) — Full-page mobile capture with single-column stacked roster cards.
+  - [`10_nurse_list_mobile_morning.png`](../screens/nurse-list/10_nurse_list_mobile_morning.png) — Mobile view filtered by `Morning` (`4 of 10 Staff`).
+  - [`11_nurse_list_mobile_night.png`](../screens/nurse-list/11_nurse_list_mobile_night.png) — Mobile view filtered by `Night` (`3 of 10 Staff`).
+  - [`12_nurse_list_mobile_selected_detail.png`](../screens/nurse-list/12_nurse_list_mobile_selected_detail.png) — Mobile view after selecting `Maria Garcia` (`ID #4`, `On Call Guard` badge rendered via `@switch`).
 
 ### 5.5. Nurse Search Screen Component (`Nurse Search`) — Zehao Yin (`#5`)
-- **Branch:** `[Pending creation/linking from staging]`
-- **Status:** `[Pending completion and documentation after merging to staging]`
-- **Items to document:**
-  - Component generated with `ng generate component ...`, dedicated `.html` file, and `/nurse-search` route (`Home <-> Nurse Search`).
-  - Name search view displaying how 3 simulated results look (static data, no backend).
-  - Image or icon, `(click)` interaction updating visible state, and `@if` / `@switch` + `@for`.
-  - Screenshots in [`docs/screens/nurse-search/`](../screens/nurse-search/).
+- **Branch:** `5-develop-nurse-search-screen-component`
+- **Pull Request:** [PR #12](https://github.com/Ignaciobrenas/Nurse-Simulator-Frontend/pull/12) (`MERGED` into `staging`)
+- **Key files:** `src/app/components/nurse-search/` (`nurse-search.component.ts`, `nurse-search.component.html`, `nurse-search.component.css`, `nurse-search.component.spec.ts`), `src/app/models/nurse.model.ts`, `src/app/mocks/nurses.mock.ts`, and `src/app/app.routes.ts`.
+- **Implementation & PR06 compliance:**
+  - **Own HTML file:** standalone component `NurseSearch` with dedicated template `src/app/components/nurse-search/nurse-search.component.html` and encapsulated styles matching the `--ns-*` tokens.
+  - **Simulated search by name (no backend):** reactive case-insensitive filter over `MOCK_NURSES` matching `nurse.name`. Initializes with `DEFAULT_QUERY = 'An'`, returning **3 simulated results** (`Ana`, `Antonio Garcia`, `Manuel Garcia`), alongside quick-search chips (`An`, `Garcia`, `Lucia`, `Pablo`).
+  - **Image & icons:** hospital emblem `<img src="nurse-logo.png">` in the top bar plus SVG icons (search magnifying glass, nurse avatar on result cards, and Home back arrows).
+  - **Click interaction:**
+    - `search()` (via `Search` button / form submit) filters the roster by the entered query.
+    - `applySuggestion(name)` (quick-search chips `An`, `Garcia`, `Lucia`, `Pablo`, and `Show sample results`) applies a preset query and refreshes visible results.
+    - `clearSearch()` (`Clear` button) clears the query and switches to the empty-query state.
+    - `selectNurse(nurse)` clicking a result card toggles its expandable details (`Email`, `Phone`, `Ward / Room`, `Experience`).
+  - **Control flow (`@if`, `@switch` and `@for`):**
+    - `@if (searchTerm())` with `@else` for the results summary; `@if (!searchTerm())` / `@else if (results().length === 0)` / `@else` for empty query, no-results, and results list states; `@if (selectedNurse()?.id === nurse.id)` for expandable card details.
+    - `@switch (nurse.status)` renders the status pill (`On Duty`, `On Call`, `Off Duty`) on each result card.
+    - `@for (name of suggestions; track name)` renders quick-search chips and `@for (nurse of results(); track nurse.id; let i = $index)` renders numbered result cards.
+  - **Navigation (`RouterLink`):** `{ path: 'nurse-search', component: NurseSearch }` registered in `src/app/app.routes.ts`. `Home -> Nurse Search` via the *Nurse Search* module card, and `Nurse Search -> Home` via `Return to Home` (top bar) and `Return to Hospital Home Portal` (footer).
+  - **Verification:**
+    - `ng test --watch=false` passing 9/9 tests in `nurse-search.component.spec.ts` (within the full 28/28 suite across 5 files): component creation, logo/icon/Home links, 3 default results for `'An'`, typed-name search, restoring sample results from no-results state, quick-search chips, no-results state, clear search, and toggling nurse details.
+    - `ng build` generates the bundle cleanly (with a CSS budget warning on `nurse-search.component.css`: `5.14 kB` vs the `4.00 kB` warning budget).
+- **Evidence:** screenshots in [`docs/screens/nurse-search/`](../screens/nurse-search/):
+  - [`searchDefault.png`](../screens/nurse-search/searchDefault.png) — Initial view with default query `"An"` displaying 3 results (`Ana`, `Antonio Garcia`, `Manuel Garcia`).
+  - [`searchTypedName.png`](../screens/nurse-search/searchTypedName.png) — Name search (`"lucia"`) showing `1 result for "lucia"` with the `Lucia` quick-search chip active.
+  - [`searchResultDetails.png`](../screens/nurse-search/searchResultDetails.png) — Expanded details (`Email`, `Phone`, `Ward / Room`, `Experience`) rendered via `@if` after clicking `Antonio Garcia`.
+  - [`searchNoResults.png`](../screens/nurse-search/searchNoResults.png) — No-results state (`"Pablo"`) rendered via `@else if` with the `Show sample results` recovery button.
+  - [`searchEmpty.png`](../screens/nurse-search/searchEmpty.png) — Empty state after clicking `Clear`, rendering the `@if (!searchTerm())` prompt.
+  - [`searchMobile.png`](../screens/nurse-search/searchMobile.png) — Mobile responsive layout check with stacked header, search form, chips, and the 3 `"An"` results.
 
 ---
 
@@ -155,9 +203,9 @@ Following the specification (`angular.dev/tutorials` -> *Learn Angular*), the 10
 | Screen | Own `.html` file | `Home <-> Screen` Navigation | Image or Icon | `(click)` modifying view | `@if` / `@switch` & `@for` | Status |
 | :--- | :---: | :---: | :---: | :---: | :---: | :--- |
 | **Home** | `home.component.html` | `/home` -> `/login`, `/nurse-list`, `/nurse-search` | `nurse-logo.png` + SVG | `selectShift()` / `cycleShift()` | `@switch` + `@for` | Completed (`PR #9`) |
-| **Login** | `login.component.html` | `/login` <-> `/home` | `nurse-logo.png` + SVG | `selectRole()` / `togglePassword()` / `submit()` | `@if` + `@switch` + `@for` | Completed (`PR #10`, in review) |
-| **Nurse List** | Pending | `/nurse-list` <-> `/home` | Pending | Pending | Pending | In progress (`#4`) |
-| **Nurse Search** | Pending | `/nurse-search` <-> `/home` | Pending | Pending | Pending | Pending (`#5`) |
+| **Login** | `login.component.html` | `/login` <-> `/home` | `nurse-logo.png` + SVG | `selectRole()` / `togglePassword()` / `submit()` | `@if` + `@switch` + `@for` | Completed (`PR #10`) |
+| **Nurse List** | `nurse-list.component.html` | `/nurse-list` <-> `/home` | `nurse-logo.png` + SVG | `selectFilter()` / `cycleFilter()` / `selectNurse()` / `clearSelection()` | `@if` + `@switch` + `@for` | Completed (`PR #11`) |
+| **Nurse Search** | `nurse-search.component.html` | `/nurse-search` <-> `/home` | `nurse-logo.png` + SVG | `search()` / `applySuggestion()` / `clearSearch()` / `selectNurse()` | `@if` + `@switch` + `@for` | Completed (`PR #12`) |
 
 ---
 
@@ -165,6 +213,8 @@ Following the specification (`angular.dev/tutorials` -> *Learn Angular*), the 10
 
 ```text
 Nurse-Simulator-Frontend/
+├── .github/
+│   └── pull_request_template.md        # Official Pull Request template
 ├── docs/
 │   ├── general/
 │   │   ├── DOCUMENTACION_ES.md         # Spanish technical documentation
@@ -182,7 +232,13 @@ Nurse-Simulator-Frontend/
 │   ├── app/
 │   │   ├── components/
 │   │   │   ├── home/                   # Home component (Issue #2)
-│   │   │   └── login/                  # Login component (Issue #3)
+│   │   │   ├── login/                  # Login component (Issue #3)
+│   │   │   ├── nurse-list/             # Nurse List component (Issue #4)
+│   │   │   └── nurse-search/           # Nurse Search component (Issue #5)
+│   │   ├── mocks/
+│   │   │   └── nurses.mock.ts          # Simulated nurse dataset (MOCK_NURSES)
+│   │   ├── models/
+│   │   │   └── nurse.model.ts          # Nurse, ShiftType & NurseStatus types
 │   │   ├── app.component.css
 │   │   ├── app.component.html          # Root shell with <router-outlet />
 │   │   ├── app.component.spec.ts
@@ -212,7 +268,7 @@ npm install
 
 # 3. Start local development server
 npm start
-# (runs ng serve at http://localhost:4200/)
+# (or: npm run dev / ng serve -> http://localhost:4200/)
 
 # 4. Build and run unit tests
 npm run build
