@@ -233,7 +233,7 @@ h1 {
 }
 .result-avatar {
   display: inline-flex;
-  align-items: center;
+  align-items: flex-end;
   justify-content: center;
   width: 42px;
   height: 42px;
@@ -241,10 +241,12 @@ h1 {
   background: var(--ns-green-soft);
   color: var(--ns-green-strong);
   flex-shrink: 0;
+  overflow: hidden;
 }
-.result-avatar svg {
-  width: 22px;
-  height: 22px;
+.result-avatar img {
+  display: block;
+  width: 36px;
+  height: 36px;
 }
 .result-info {
   flex: 1;
