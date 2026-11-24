@@ -34,6 +34,16 @@ describe('NurseList', () => {
     expect(title).toContain('Nurse Simulator');
   });
 
+  it('should render the nurse list illustration banner image', () => {
+    const compiled = fixture.nativeElement as HTMLElement;
+    const nurseListImg = compiled.querySelector(
+      'img[data-testid="nurse-list-banner-image"]',
+    ) as HTMLImageElement | null;
+    expect(nurseListImg).not.toBeNull();
+    expect(nurseListImg?.getAttribute('src')).toBe('nurse-list.png');
+    expect(nurseListImg?.getAttribute('alt')).toContain('Directory');
+  });
+
   it('should render the sample list of registered nurses', () => {
     const compiled = fixture.nativeElement as HTMLElement;
     const cards = compiled.querySelectorAll('article.nurse-card');

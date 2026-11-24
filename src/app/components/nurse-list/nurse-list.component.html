@@ -35,42 +35,54 @@
 
   <main class="workspace">
     <section class="overview-card" aria-label="Directory roster controls">
-      <div class="overview-details">
-        <span class="overview-eyebrow">Nursing Directory Roster</span>
-        <div class="overview-title-row">
-          <h2 class="overview-value" data-testid="active-filter-title">
-            {{
-              activeFilter() === 'All' ? 'All Registered Nurses' : activeFilter() + ' Shift Nurses'
-            }}
-          </h2>
-          <span class="status-pill status-pill--count" data-testid="nurse-count-pill">
-            {{ filteredNurses().length }} of {{ totalCount() }} Staff
-          </span>
-          <span class="status-pill status-pill--onduty">
-            <span class="status-dot status-dot--onduty" aria-hidden="true"></span>
-            {{ onDutyCount() }} On Duty
-          </span>
-        </div>
+      <div class="overview-main">
+        <img
+          class="overview-nurse-image"
+          src="nurse-list.png"
+          alt="Hospital Nursing Staff Directory Illustration"
+          width="88"
+          height="88"
+          data-testid="nurse-list-banner-image"
+        />
+        <div class="overview-details">
+          <span class="overview-eyebrow">Nursing Directory Roster</span>
+          <div class="overview-title-row">
+            <h2 class="overview-value" data-testid="active-filter-title">
+              {{
+                activeFilter() === 'All'
+                  ? 'All Registered Nurses'
+                  : activeFilter() + ' Shift Nurses'
+              }}
+            </h2>
+            <span class="status-pill status-pill--count" data-testid="nurse-count-pill">
+              {{ filteredNurses().length }} of {{ totalCount() }} Staff
+            </span>
+            <span class="status-pill status-pill--onduty">
+              <span class="status-dot status-dot--onduty" aria-hidden="true"></span>
+              {{ onDutyCount() }} On Duty
+            </span>
+          </div>
 
-        <p class="overview-note">
-          @switch (activeFilter()) {
-            @case ('All') {
-              Viewing all hospital registered nursing staff across every department and schedule.
+          <p class="overview-note">
+            @switch (activeFilter()) {
+              @case ('All') {
+                Viewing all hospital registered nursing staff across every department and schedule.
+              }
+              @case ('Morning') {
+                Viewing morning shift nursing personnel (07:00 – 15:00) assigned to primary care and
+                rounds.
+              }
+              @case ('Afternoon') {
+                Viewing afternoon shift nursing personnel (15:00 – 23:00) handling shift handovers
+                and inpatient care.
+              }
+              @case ('Night') {
+                Viewing night guard personnel (23:00 – 07:00) monitoring wards and emergency
+                rotations.
+              }
             }
-            @case ('Morning') {
-              Viewing morning shift nursing personnel (07:00 – 15:00) assigned to primary care and
-              rounds.
-            }
-            @case ('Afternoon') {
-              Viewing afternoon shift nursing personnel (15:00 – 23:00) handling shift handovers and
-              inpatient care.
-            }
-            @case ('Night') {
-              Viewing night guard personnel (23:00 – 07:00) monitoring wards and emergency
-              rotations.
-            }
-          }
-        </p>
+          </p>
+        </div>
       </div>
 
       <div class="overview-controls">
