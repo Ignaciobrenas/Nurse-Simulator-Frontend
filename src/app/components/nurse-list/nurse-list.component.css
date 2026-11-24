@@ -1,0 +1,418 @@
+:host {
+  display: block;
+}
+.top-bar {
+  background: var(--ns-surface);
+  border-bottom: 1px solid var(--ns-border);
+}
+.top-bar-inner,
+.workspace {
+  max-width: 1040px;
+  margin: 0 auto;
+  padding-inline: 1.5rem;
+}
+.top-bar-inner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  padding-block: 1rem;
+  gap: 0.75rem;
+}
+.brand-group {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  text-decoration: none;
+}
+.brand-logo {
+  display: block;
+  flex-shrink: 0;
+}
+h1,
+h2,
+h3,
+.overview-value {
+  margin: 0;
+  color: var(--ns-text);
+}
+h1 {
+  font-size: 1.35rem;
+  letter-spacing: -0.01em;
+}
+.brand-subtitle,
+.overview-note,
+.section-head p,
+.nurse-dept,
+.nurse-card-email,
+.nurse-card-ward {
+  margin: 0.2rem 0 0;
+  font-size: 0.88rem;
+  color: var(--ns-text-muted);
+}
+.nurse-card-ward {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+.ward-icon {
+  width: 15px;
+  height: 15px;
+  color: var(--ns-green);
+  flex-shrink: 0;
+}
+.header-actions,
+.overview-title-row,
+.nurse-profile-row,
+.inspection-badges {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+.unit-badge,
+.status-pill,
+.card-shift-tag,
+.shift-badge {
+  font-size: 0.76rem;
+  font-weight: 600;
+  border-radius: 999px;
+  padding: 0.2rem 0.6rem;
+}
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+.status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.status-dot--onduty {
+  background: var(--ns-green-strong);
+}
+.status-dot--oncall {
+  background: var(--ns-amber-text);
+}
+.status-dot--offduty {
+  background: #64748b;
+}
+.unit-badge,
+.shift-badge,
+.status-pill--onduty {
+  background: var(--ns-green-soft);
+  color: var(--ns-green-strong);
+}
+.unit-badge,
+.shift-badge {
+  border: 1px solid #bce3d0;
+  padding: 0.35rem 0.75rem;
+}
+.status-pill--count,
+.card-shift-tag {
+  background: var(--ns-surface-muted);
+  color: var(--ns-text-muted);
+  border: 1px solid var(--ns-border);
+}
+.status-pill--oncall,
+.card-shift-tag--night {
+  background: var(--ns-amber-bg);
+  color: var(--ns-amber-text);
+}
+.status-pill--offduty {
+  background: #f1f5f9;
+  color: #64748b;
+}
+.workspace {
+  padding-block: 2rem 3.5rem;
+}
+.overview-card,
+.inspection-card,
+.nurse-card {
+  background: var(--ns-surface);
+  border: 1px solid var(--ns-border);
+  box-shadow: 0 2px 8px rgba(19, 38, 30, 0.03);
+}
+.overview-card,
+.inspection-card {
+  border-radius: var(--ns-radius-lg);
+  padding: 1.5rem 1.75rem;
+}
+.overview-card {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.25rem;
+  border-left: 4px solid var(--ns-green-strong);
+}
+.overview-main {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  flex: 1 1 520px;
+}
+.overview-nurse-image {
+  width: 80px;
+  height: 80px;
+  object-fit: contain;
+  border-radius: 50%;
+  flex-shrink: 0;
+  background: var(--ns-green-soft);
+  border: 2px solid #bce3d0;
+  padding: 4px;
+  box-shadow: 0 4px 10px rgba(19, 38, 30, 0.08);
+  transition: transform 0.2s ease;
+}
+.overview-nurse-image:hover {
+  transform: scale(1.04);
+}
+.overview-eyebrow,
+.nurse-license,
+.item-label,
+.nurse-card-id {
+  display: block;
+  font-size: 0.74rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--ns-green);
+}
+.overview-value {
+  font-size: 1.4rem;
+}
+.filter-tabs {
+  display: inline-flex;
+  padding: 3px;
+  border-radius: var(--ns-radius-md);
+  background: var(--ns-surface-muted);
+  border: 1px solid var(--ns-border);
+}
+.filter-tab,
+.cycle-btn,
+.nav-back-btn,
+.close-detail-btn {
+  border: 0;
+  font-weight: 600;
+  cursor: pointer;
+}
+.filter-tab {
+  background: transparent;
+  color: var(--ns-text-muted);
+  font-size: 0.85rem;
+  padding: 0.45rem 0.85rem;
+  border-radius: 7px;
+}
+.filter-tab--active {
+  background: var(--ns-surface);
+  color: var(--ns-green-strong);
+  box-shadow: 0 1px 3px rgba(19, 38, 30, 0.08);
+}
+.cycle-btn {
+  border-radius: var(--ns-radius-md);
+  background: var(--ns-green-strong);
+  color: #fff;
+  font-size: 0.88rem;
+  padding: 0.62rem 1.05rem;
+}
+.cycle-btn:hover {
+  background: var(--ns-green-hover);
+}
+.nav-back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.85rem;
+  color: var(--ns-green-strong);
+  text-decoration: none;
+  padding: 0.45rem 0.85rem;
+  border-radius: var(--ns-radius-md);
+  border: 1px solid var(--ns-border);
+  background: var(--ns-surface-muted);
+}
+.nav-back-btn:hover {
+  background: var(--ns-green-soft);
+  border-color: var(--ns-border-hover);
+}
+.nav-back-btn svg {
+  width: 16px;
+  height: 16px;
+}
+.inspection-card {
+  margin-top: 1.5rem;
+  border-color: var(--ns-border-hover);
+}
+.inspection-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding-bottom: 1.25rem;
+  border-bottom: 1px solid var(--ns-border);
+}
+.nurse-avatar-large,
+.nurse-card-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: var(--ns-radius-md);
+  background: var(--ns-green-soft);
+  color: var(--ns-green-strong);
+  flex-shrink: 0;
+}
+.nurse-avatar-large svg,
+.nurse-card-icon svg {
+  width: 24px;
+  height: 24px;
+}
+.inspection-name {
+  font-size: 1.3rem;
+  margin-top: 0.15rem;
+}
+.close-detail-btn {
+  background: var(--ns-surface-muted);
+  border: 1px solid var(--ns-border);
+  border-radius: 999px;
+  width: 28px;
+  height: 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--ns-text-muted);
+}
+.close-detail-btn:hover {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+.inspection-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.15rem;
+  margin-top: 1.25rem;
+}
+.item-value {
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+.inspection-placeholder,
+.empty-state {
+  margin-top: 1.5rem;
+  border-radius: var(--ns-radius-md);
+  background: var(--ns-surface);
+  border: 1px dashed var(--ns-border);
+  color: var(--ns-text-muted);
+}
+.inspection-placeholder {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem 1.4rem;
+  font-size: 0.88rem;
+}
+.placeholder-icon {
+  width: 22px;
+  height: 22px;
+  color: var(--ns-green);
+  flex-shrink: 0;
+}
+.roster-section {
+  margin-top: 2rem;
+}
+.section-head h2 {
+  font-size: 1.15rem;
+}
+.section-head p {
+  margin-bottom: 1.25rem;
+}
+.roster-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1.15rem;
+}
+.nurse-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  padding: 1.4rem;
+  border-radius: var(--ns-radius-lg);
+  cursor: pointer;
+  transition:
+    transform 0.18s ease,
+    border-color 0.18s ease,
+    box-shadow 0.18s ease;
+}
+.nurse-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--ns-border-hover);
+  box-shadow: 0 8px 20px rgba(4, 120, 87, 0.08);
+}
+.nurse-card--selected {
+  border-color: var(--ns-green-strong);
+  background: #f6fbf8;
+  box-shadow: 0 0 0 2px rgba(4, 120, 87, 0.15);
+}
+.nurse-card-top,
+.nurse-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.nurse-card h3 {
+  margin-top: 0.25rem;
+  font-size: 1.1rem;
+}
+.nurse-card-dept {
+  font-weight: 500;
+  color: var(--ns-text);
+}
+.nurse-card-footer {
+  margin-top: 0.5rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid #edf2ee;
+}
+.nurse-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--ns-green-strong);
+}
+.nurse-cta svg {
+  width: 14px;
+  height: 14px;
+  transition: transform 0.15s ease;
+}
+.nurse-card:hover .nurse-cta svg {
+  transform: translateX(3px);
+}
+.empty-state {
+  padding: 3rem 2rem;
+  text-align: center;
+}
+.navigation-footer {
+  margin-top: 2.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--ns-border);
+}
+:focus-visible {
+  outline: 2px solid var(--ns-green-strong);
+  outline-offset: 2px;
+}
+@media (max-width: 640px) {
+  .overview-main {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.85rem;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .nurse-card,
+  .nurse-cta svg {
+    transition: none;
+  }
+}

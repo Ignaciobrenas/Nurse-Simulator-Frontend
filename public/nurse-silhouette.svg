@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Nurse silhouette">
+  <g fill="#047857">
+    <!-- Hair -->
+    <path d="M20 27c0-8 5-13.5 12-13.5s12 5.5 12 13.5c0 5-1 9-3 11l-2-6H25l-2 6c-2-2-3-6-3-11z" />
+    <!-- Head -->
+    <ellipse cx="32" cy="26" rx="9" ry="10.5" />
+    <!-- Cap with cut-out cross -->
+    <path
+      fill-rule="evenodd"
+      d="M21 15.5 23 7c3-1.6 6-2.2 9-2.2s6 .6 9 2.2l2 8.5c-3.4-1.3-7-2-11-2s-7.6.7-11 2zM30.8 6.2h2.4v2.2h2.2v2.4h-2.2V13h-2.4v-2.2h-2.2V8.4h2.2z"
+    />
+    <!-- Neck -->
+    <path d="M28 35h8v7h-8z" />
+    <!-- Uniform with V-neck and chest badge -->
+    <path
+      fill-rule="evenodd"
+      d="M8 64c0-11 6-18 15-20l5-2h8l5 2c9 2 15 9 15 20zM32 53l-5.5-10h11zM40 52h6v4h-6z"
+    />
+  </g>
+</svg>

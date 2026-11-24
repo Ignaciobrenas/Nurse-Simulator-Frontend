@@ -1,0 +1,365 @@
+<div class="hospital-nurse-list">
+  <header class="top-bar">
+    <div class="top-bar-inner">
+      <a class="brand-group" routerLink="/home" aria-label="Nurse Simulator home">
+        <img
+          class="brand-logo"
+          src="nurse-logo.png"
+          alt="Nurse Simulator Hospital Logo"
+          width="48"
+          height="48"
+        />
+        <div>
+          <h1>Nurse Simulator</h1>
+          <p class="brand-subtitle">Hospital Nursing Staff Directory</p>
+        </div>
+      </a>
+
+      <div class="header-actions">
+        <a routerLink="/home" class="nav-back-btn" data-testid="back-to-home">
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            aria-hidden="true"
+          >
+            <path stroke-linecap="round" stroke-linejoin="round" d="M19 12H5m7 7-7-7 7-7" />
+          </svg>
+          Return to Home
+        </a>
+        <span class="unit-badge">Directory · Active</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="workspace">
+    <section class="overview-card" aria-label="Directory roster controls">
+      <div class="overview-main">
+        <img
+          class="overview-nurse-image"
+          src="nurse-list.png"
+          alt="Hospital Nursing Staff Directory Illustration"
+          width="88"
+          height="88"
+          data-testid="nurse-list-banner-image"
+        />
+        <div class="overview-details">
+          <span class="overview-eyebrow">Nursing Directory Roster</span>
+          <div class="overview-title-row">
+            <h2 class="overview-value" data-testid="active-filter-title">
+              {{
+                activeFilter() === 'All'
+                  ? 'All Registered Nurses'
+                  : activeFilter() + ' Shift Nurses'
+              }}
+            </h2>
+            <span class="status-pill status-pill--count" data-testid="nurse-count-pill">
+              {{ filteredNurses().length }} of {{ totalCount() }} Staff
+            </span>
+            <span class="status-pill status-pill--onduty">
+              <span class="status-dot status-dot--onduty" aria-hidden="true"></span>
+              {{ onDutyCount() }} On Duty
+            </span>
+          </div>
+
+          <p class="overview-note">
+            @switch (activeFilter()) {
+              @case ('All') {
+                Viewing all hospital registered nursing staff across every department and schedule.
+              }
+              @case ('Morning') {
+                Viewing morning shift nursing personnel (07:00 – 15:00) assigned to primary care and
+                rounds.
+              }
+              @case ('Afternoon') {
+                Viewing afternoon shift nursing personnel (15:00 – 23:00) handling shift handovers
+                and inpatient care.
+              }
+              @case ('Night') {
+                Viewing night guard personnel (23:00 – 07:00) monitoring wards and emergency
+                rotations.
+              }
+            }
+          </p>
+        </div>
+      </div>
+
+      <div class="overview-controls">
+        <div class="filter-tabs" role="group" aria-label="Filter nurses by shift">
+          @for (shift of filterShifts; track shift) {
+            <button
+              type="button"
+              class="filter-tab"
+              [class.filter-tab--active]="activeFilter() === shift"
+              [attr.data-testid]="'filter-' + shift.toLowerCase()"
+              (click)="selectFilter(shift)"
+            >
+              {{ shift }}
+            </button>
+          }
+        </div>
+
+        <button
+          type="button"
+          class="cycle-btn"
+          data-testid="cycle-filter-btn"
+          (click)="cycleFilter()"
+        >
+          Cycle Filter
+        </button>
+      </div>
+    </section>
+
+    @if (selectedNurse(); as nurse) {
+      <section
+        class="inspection-card"
+        aria-label="Selected nurse profile"
+        data-testid="nurse-detail-panel"
+      >
+        <div class="inspection-header">
+          <div class="nurse-profile-row">
+            <span class="nurse-avatar-large" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M16 19v-1a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v1"
+                />
+                <circle cx="9.5" cy="7" r="3.5" />
+                <path stroke-linecap="round" stroke-linejoin="round" d="M17 8h4m-4 4h4" />
+              </svg>
+            </span>
+            <div>
+              <span class="nurse-license"
+                >License: {{ nurse.licenseNumber }} · ID #{{ nurse.id }}</span
+              >
+              <h3 class="inspection-name" data-testid="selected-nurse-name">{{ nurse.name }}</h3>
+              <p class="nurse-dept">{{ nurse.department }}</p>
+            </div>
+          </div>
+
+          <div class="inspection-badges">
+            @switch (nurse.status) {
+              @case ('On Duty') {
+                <span class="status-pill status-pill--onduty">
+                  <span class="status-dot status-dot--onduty" aria-hidden="true"></span>
+                  On Duty
+                </span>
+              }
+              @case ('On Call') {
+                <span class="status-pill status-pill--oncall">
+                  <span class="status-dot status-dot--oncall" aria-hidden="true"></span>
+                  On Call Guard
+                </span>
+              }
+              @case ('Off Duty') {
+                <span class="status-pill status-pill--offduty">
+                  <span class="status-dot status-dot--offduty" aria-hidden="true"></span>
+                  Off Duty
+                </span>
+              }
+            }
+
+            <span class="shift-badge"> {{ nurse.shift }} Shift </span>
+
+            <button
+              type="button"
+              class="close-detail-btn"
+              aria-label="Close detail panel"
+              (click)="clearSelection()"
+            >
+              <svg
+                width="14"
+                height="14"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2.2"
+                aria-hidden="true"
+              >
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <div class="inspection-grid">
+          <div class="inspection-item">
+            <span class="item-label">Hospital Email</span>
+            <span class="item-value" data-testid="selected-nurse-email">{{ nurse.email }}</span>
+          </div>
+          <div class="inspection-item">
+            <span class="item-label">Direct Contact Phone</span>
+            <span class="item-value">{{ nurse.phone }}</span>
+          </div>
+          <div class="inspection-item">
+            <span class="item-label">Assigned Ward / Room</span>
+            <span class="item-value">{{ nurse.roomOrWard }}</span>
+          </div>
+          <div class="inspection-item">
+            <span class="item-label">Clinical Experience</span>
+            <span class="item-value">{{ nurse.yearsOfExperience }} years</span>
+          </div>
+        </div>
+      </section>
+    } @else {
+      <div class="inspection-placeholder" data-testid="nurse-placeholder">
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.6"
+          class="placeholder-icon"
+          aria-hidden="true"
+        >
+          <circle cx="12" cy="12" r="9" />
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4m0 4h.01" />
+        </svg>
+        <p>
+          Select any registered nurse from the roster below to inspect their full profile and
+          assignment details.
+        </p>
+      </div>
+    }
+
+    <section class="roster-section" aria-label="Nurse list directory">
+      <div class="section-head">
+        <h2>Registered Nursing Staff</h2>
+        <p>
+          Directory of hospital nursing professionals. Click any profile card to view detailed file.
+        </p>
+      </div>
+
+      @if (filteredNurses().length > 0) {
+        <div class="roster-grid">
+          @for (nurse of filteredNurses(); track nurse.id) {
+            <article
+              class="nurse-card"
+              [class.nurse-card--selected]="selectedNurse()?.id === nurse.id"
+              [attr.data-testid]="'nurse-card-' + nurse.id"
+              (click)="selectNurse(nurse)"
+              tabindex="0"
+              role="button"
+              [attr.aria-pressed]="selectedNurse()?.id === nurse.id"
+              (keydown.enter)="selectNurse(nurse)"
+              (keydown.space)="selectNurse(nurse)"
+            >
+              <div class="nurse-card-top">
+                <span class="nurse-card-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="M16 19v-1a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v1"
+                    />
+                    <circle cx="9.5" cy="7" r="3.5" />
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M17 8h4m-4 4h4" />
+                  </svg>
+                </span>
+
+                <span
+                  class="card-shift-tag"
+                  [class.card-shift-tag--night]="nurse.shift === 'Night'"
+                >
+                  {{ nurse.shift }}
+                </span>
+              </div>
+
+              <div class="nurse-card-info">
+                <span class="nurse-card-id">#{{ nurse.id }} · {{ nurse.licenseNumber }}</span>
+                <h3 class="nurse-card-name">{{ nurse.name }}</h3>
+                <p class="nurse-card-dept">{{ nurse.department }}</p>
+                <p class="nurse-card-email">{{ nurse.email }}</p>
+                <p class="nurse-card-ward">
+                  <svg
+                    class="ward-icon"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                    aria-hidden="true"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
+                    />
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z"
+                    />
+                  </svg>
+                  <span>{{ nurse.roomOrWard }}</span>
+                </p>
+              </div>
+
+              <div class="nurse-card-footer">
+                @switch (nurse.status) {
+                  @case ('On Duty') {
+                    <span class="status-pill status-pill--onduty">
+                      <span class="status-dot status-dot--onduty" aria-hidden="true"></span>
+                      Active Duty
+                    </span>
+                  }
+                  @case ('On Call') {
+                    <span class="status-pill status-pill--oncall">
+                      <span class="status-dot status-dot--oncall" aria-hidden="true"></span>
+                      On Call
+                    </span>
+                  }
+                  @case ('Off Duty') {
+                    <span class="status-pill status-pill--offduty">
+                      <span class="status-dot status-dot--offduty" aria-hidden="true"></span>
+                      Off Duty
+                    </span>
+                  }
+                }
+
+                <span class="nurse-cta">
+                  View Profile
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    aria-hidden="true"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="M5 12h14m-6-6 6 6-6 6"
+                    />
+                  </svg>
+                </span>
+              </div>
+            </article>
+          }
+        </div>
+      } @else {
+        <div class="empty-state">
+          <p>No registered nurses found for the current shift filter.</p>
+          <button type="button" class="cycle-btn" (click)="selectFilter('All')">
+            Reset Filter
+          </button>
+        </div>
+      }
+    </section>
+
+    <div class="navigation-footer">
+      <a routerLink="/home" class="nav-back-btn">
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          aria-hidden="true"
+        >
+          <path stroke-linecap="round" stroke-linejoin="round" d="M19 12H5m7 7-7-7 7-7" />
+        </svg>
+        Return to Hospital Home Portal
+      </a>
+    </div>
+  </main>
+</div>

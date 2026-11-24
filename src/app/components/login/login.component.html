@@ -1,0 +1,224 @@
+<div class="login-page">
+  <header class="top-bar">
+    <div class="top-bar-inner">
+      <a class="brand-group" routerLink="/home" aria-label="Nurse Simulator home">
+        <img
+          class="brand-logo"
+          src="nurse-logo.png"
+          alt="Nurse Simulator Hospital Logo"
+          width="44"
+          height="44"
+        />
+        <span>
+          <strong class="brand-title">Nurse Simulator</strong>
+          <span class="brand-subtitle">Hospital Nursing Staff Portal</span>
+        </span>
+      </a>
+
+      <a class="back-link" routerLink="/home" data-testid="back-home">
+        <svg
+          width="18"
+          height="18"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          aria-hidden="true"
+        >
+          <path stroke-linecap="round" stroke-linejoin="round" d="M19 12H5m6 6-6-6 6-6" />
+        </svg>
+        Back to Home
+      </a>
+    </div>
+  </header>
+
+  <main class="login-layout">
+    <aside class="brand-panel" aria-label="Portal information">
+      <img class="panel-logo" src="nurse-logo.png" alt="" width="72" height="72" />
+      <h1>Staff Access Portal</h1>
+      <p class="panel-lead">
+        Sign in with your nursing credentials to open the shift workspace of your unit.
+      </p>
+
+      <ul class="feature-list">
+        @for (feature of features; track feature.title) {
+          <li>
+            <span class="feature-check" aria-hidden="true">
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2.4"
+              >
+                <path stroke-linecap="round" stroke-linejoin="round" d="m5 12.5 4.5 4.5L19 7.5" />
+              </svg>
+            </span>
+            <span>
+              <strong>{{ feature.title }}</strong>
+              <small>{{ feature.detail }}</small>
+            </span>
+          </li>
+        }
+      </ul>
+    </aside>
+
+    <section class="login-card" aria-labelledby="login-title">
+      @if (status() === 'success' && loggedUser(); as user) {
+        <div class="welcome" data-testid="login-success">
+          <span class="welcome-icon" aria-hidden="true">
+            <svg
+              width="28"
+              height="28"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M12 3l7 3v5c0 5-3.5 8.5-7 10-3.5-1.5-7-5-7-10V6l7-3Z"
+              />
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9.5 12l1.8 1.8 3.5-3.6" />
+            </svg>
+          </span>
+          <h2 id="login-title">Welcome, {{ user.fullName }}</h2>
+          <p class="muted">
+            Access granted as <strong>{{ selectedRoleLabel() }}</strong>.
+          </p>
+          <dl class="session-info">
+            <div>
+              <dt>Username</dt>
+              <dd>{{ user.username }}</dd>
+            </div>
+            <div>
+              <dt>Unit</dt>
+              <dd>{{ user.ward }}</dd>
+            </div>
+          </dl>
+          <div class="welcome-actions">
+            <a class="btn btn-primary" routerLink="/home">Go to Home</a>
+            <button type="button" class="btn btn-ghost" (click)="resetForm()">Sign out</button>
+          </div>
+        </div>
+      } @else {
+        <div class="role-switcher" role="group" aria-label="Select staff role">
+          @for (role of roles; track role.id) {
+            <button
+              type="button"
+              class="role-tab"
+              [class.role-tab--active]="selectedRole() === role.id"
+              [attr.aria-pressed]="selectedRole() === role.id"
+              (click)="selectRole(role.id)"
+            >
+              {{ role.label }}
+              <small>{{ role.area }}</small>
+            </button>
+          }
+        </div>
+
+        <img
+          class="login-avatar"
+          src="user-avatar.svg"
+          alt=""
+          width="64"
+          height="64"
+          data-testid="login-avatar"
+        />
+
+        <h2 id="login-title" data-testid="login-heading">Sign in as {{ selectedRoleLabel() }}</h2>
+
+        @switch (selectedRole()) {
+          @case ('nurse') {
+            <p class="muted" data-testid="role-note">
+              Access patient care plans and medication rounds.
+            </p>
+          }
+          @case ('head-nurse') {
+            <p class="muted" data-testid="role-note">
+              Manage unit shifts and approve handover reports.
+            </p>
+          }
+          @case ('supervisor') {
+            <p class="muted" data-testid="role-note">
+              Oversee staffing levels across hospital units.
+            </p>
+          }
+        }
+
+        @if (status() === 'error') {
+          <div class="alert alert-error" role="alert" data-testid="login-error">
+            Invalid credentials for {{ selectedRoleLabel() }}. {{ remainingAttempts() }} attempt(s)
+            left.
+          </div>
+        }
+        @if (status() === 'locked') {
+          <div class="alert alert-locked" role="alert" data-testid="login-locked">
+            Access locked after {{ maxAttempts }} failed attempts.
+            <button type="button" class="link-btn" (click)="resetForm()">Reset form</button>
+          </div>
+        }
+
+        <form class="login-form" novalidate (submit)="submit($event)">
+          <label class="field">
+            <span class="field-label">Username</span>
+            <input
+              type="text"
+              name="username"
+              autocomplete="username"
+              placeholder="e.g. lmartinez"
+              [value]="username()"
+              [class.invalid]="submitted() && usernameError()"
+              (input)="updateUsername($event)"
+            />
+            @if (submitted() && usernameError(); as error) {
+              <span class="field-error" data-testid="username-error">{{ error }}</span>
+            }
+          </label>
+
+          <label class="field">
+            <span class="field-label">Password</span>
+            <span class="password-wrap">
+              <input
+                name="password"
+                autocomplete="current-password"
+                placeholder="Minimum 6 characters"
+                [type]="showPassword() ? 'text' : 'password'"
+                [value]="password()"
+                [class.invalid]="submitted() && passwordError()"
+                (input)="updatePassword($event)"
+              />
+              <button
+                type="button"
+                class="toggle-btn"
+                data-testid="toggle-password"
+                (click)="togglePassword()"
+              >
+                {{ showPassword() ? 'Hide' : 'Show' }}
+              </button>
+            </span>
+            @if (submitted() && passwordError(); as error) {
+              <span class="field-error" data-testid="password-error">{{ error }}</span>
+            }
+          </label>
+
+          <button type="submit" class="btn btn-primary" [disabled]="status() === 'locked'">
+            Sign in
+          </button>
+        </form>
+
+        <div class="demo-hint">
+          <span>
+            Demo {{ selectedRoleLabel() }}: <code>{{ demoAccount().username }}</code> /
+            <code>{{ demoAccount().password }}</code>
+          </span>
+          <button type="button" class="link-btn" (click)="fillDemoAccount()">
+            Use demo account
+          </button>
+        </div>
+      }
+    </section>
+  </main>
+</div>

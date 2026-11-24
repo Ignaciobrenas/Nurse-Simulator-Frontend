@@ -1,0 +1,72 @@
+name: Protect Main Branch (Staging Only)
+
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  enforce-staging-to-main:
+    name: Require main updates from staging
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Verify Pull Request targets main from staging
+        if: github.event_name == 'pull_request'
+        env:
+          HEAD_REF: ${{ github.head_ref }}
+          HEAD_REPO: ${{ github.event.pull_request.head.repo.full_name }}
+          BASE_REPO: ${{ github.repository }}
+          BASE_REF: ${{ github.base_ref }}
+        run: |
+          echo "PR head : ${HEAD_REPO}:${HEAD_REF}"
+          echo "PR base : ${BASE_REPO}:${BASE_REF}"
+
+          if [ "$HEAD_REPO" != "$BASE_REPO" ]; then
+            echo "::error::Pull requests into 'main' cannot come from an external fork (${HEAD_REPO})."
+            exit 1
+          fi
+
+          if [ "$HEAD_REF" != "staging" ]; then
+            echo "::error::Only 'staging' can be merged into 'main' (received '${HEAD_REF}'). Open a PR to 'staging' first."
+            exit 1
+          fi
+
+          echo "OK: Pull Request targets 'main' from 'staging'."
+
+      - name: Verify push to main originated from a staging PR
+        if: github.event_name == 'push'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          COMMIT_SHA: ${{ github.sha }}
+          BASE_REPO: ${{ github.repository }}
+        run: |
+          echo "Inspecting commit ${COMMIT_SHA} pushed to 'main'..."
+
+          gh api "repos/${BASE_REPO}/commits/${COMMIT_SHA}/pulls" | python3 -c '
+          import json, os, sys
+
+          pulls = json.load(sys.stdin)
+          repo = os.environ["BASE_REPO"]
+          valid = [
+              p for p in pulls
+              if p.get("base", {}).get("ref") == "main"
+              and p.get("head", {}).get("ref") == "staging"
+              and (p.get("head", {}).get("repo") or {}).get("full_name") == repo
+          ]
+
+          if not valid:
+              print("::error::Direct pushes to main or merges from branches other than staging are not allowed. Merge changes into staging first, then promote via Pull Request from staging to main.")
+              sys.exit(1)
+
+          sha = os.environ["COMMIT_SHA"]
+          pr_num = valid[0]["number"]
+          print(f"OK: Commit {sha} reached main via PR #{pr_num} (staging -> main).")
+          '
