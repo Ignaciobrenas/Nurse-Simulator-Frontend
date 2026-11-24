@@ -312,3 +312,10 @@ dd {
     grid-template-columns: 1fr;
   }
 }
+
+.login-avatar {
+  display: flex;
+  justify-content: center;
+  margin-top: 1.5rem;
+  color: var(--ns-green-strong);
+}
