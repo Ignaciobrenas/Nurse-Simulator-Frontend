@@ -312,3 +312,8 @@ dd {
     grid-template-columns: 1fr;
   }
 }
+
+.login-avatar {
+  display: block;
+  margin: 1.5rem auto 0;
+}
